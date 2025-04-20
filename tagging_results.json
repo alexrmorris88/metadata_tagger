@@ -1,0 +1,128 @@
+[
+  {
+    "schema": "TPCDS_SF10TCL",
+    "table": "CUSTOMER",
+    "column": "C_FIRST_NAME",
+    "tag_name": "PII",
+    "tag_value": "PII - Customer Information",
+    "reason": "Column name pattern: C_FIRST_NAME",
+    "database": "LegacyAuth"
+  },
+  {
+    "schema": "TPCDS_SF10TCL",
+    "table": "CUSTOMER",
+    "column": "C_LAST_NAME",
+    "tag_name": "PII",
+    "tag_value": "PII - Customer Information",
+    "reason": "Column name pattern: C_LAST_NAME",
+    "database": "LegacyAuth"
+  },
+  {
+    "schema": "TPCDS_SF10TCL",
+    "table": "CUSTOMER",
+    "column": "C_BIRTH_DAY",
+    "tag_name": "PII",
+    "tag_value": "PII - Customer Information",
+    "reason": "Manual override",
+    "database": "LegacyAuth"
+  },
+  {
+    "schema": "TPCDS_SF10TCL",
+    "table": "CUSTOMER",
+    "column": "C_BIRTH_MONTH",
+    "tag_name": "PII",
+    "tag_value": "PII - Customer Information",
+    "reason": "Manual override",
+    "database": "LegacyAuth"
+  },
+  {
+    "schema": "TPCDS_SF10TCL",
+    "table": "CUSTOMER",
+    "column": "C_BIRTH_YEAR",
+    "tag_name": "PII",
+    "tag_value": "PII - Customer Information",
+    "reason": "Manual override",
+    "database": "LegacyAuth"
+  },
+  {
+    "schema": "TPCDS_SF10TCL",
+    "table": "CUSTOMER",
+    "column": "C_BIRTH_COUNTRY",
+    "tag_name": "PII",
+    "tag_value": "PII - Customer Information",
+    "reason": "Column name pattern: C_BIRTH_COUNTRY",
+    "database": "LegacyAuth"
+  },
+  {
+    "schema": "TPCDS_SF10TCL",
+    "table": "CUSTOMER",
+    "column": "C_EMAIL_ADDRESS",
+    "tag_name": "PII",
+    "tag_value": "PII - Customer Information",
+    "reason": "Column name pattern: C_EMAIL_ADDRESS",
+    "database": "LegacyAuth"
+  },
+  {
+    "schema": "TPCDS_SF10TCL",
+    "table": "CUSTOMER_ADDRESS",
+    "column": "CA_ADDRESS_SK",
+    "tag_name": "PII",
+    "tag_value": "PII - Customer Information",
+    "reason": "Column name pattern: CA_ADDRESS_SK",
+    "database": "LegacyAuth"
+  },
+  {
+    "schema": "TPCDS_SF10TCL",
+    "table": "CUSTOMER_ADDRESS",
+    "column": "CA_ADDRESS_ID",
+    "tag_name": "PII",
+    "tag_value": "PII - Customer Information",
+    "reason": "Column name pattern: CA_ADDRESS_ID",
+    "database": "LegacyAuth"
+  },
+  {
+    "schema": "TPCDS_SF10TCL",
+    "table": "CUSTOMER_ADDRESS",
+    "column": "CA_CITY",
+    "tag_name": "PII",
+    "tag_value": "PII - Customer Information",
+    "reason": "Column name pattern: CA_CITY",
+    "database": "LegacyAuth"
+  },
+  {
+    "schema": "TPCDS_SF10TCL",
+    "table": "CUSTOMER_ADDRESS",
+    "column": "CA_STATE",
+    "tag_name": "PII",
+    "tag_value": "PII - Customer Information",
+    "reason": "Column name pattern: CA_STATE",
+    "database": "LegacyAuth"
+  },
+  {
+    "schema": "TPCDS_SF10TCL",
+    "table": "CUSTOMER_ADDRESS",
+    "column": "CA_ZIP",
+    "tag_name": "PII",
+    "tag_value": "PII - Customer Information",
+    "reason": "Column name pattern: CA_ZIP",
+    "database": "LegacyAuth"
+  },
+  {
+    "schema": "TPCDS_SF10TCL",
+    "table": "CUSTOMER_ADDRESS",
+    "column": "CA_COUNTRY",
+    "tag_name": "PII",
+    "tag_value": "PII - Customer Information",
+    "reason": "Column name pattern: CA_COUNTRY",
+    "database": "LegacyAuth"
+  },
+  {
+    "schema": "TPCDS_SF10TCL",
+    "table": "WEB_SALES",
+    "column": "WS_ORDER_NUMBER",
+    "tag_name": "PII",
+    "tag_value": "PII - Customer Information",
+    "reason": "Data pattern match: 84/100 samples",
+    "database": "LegacyAuth"
+  }
+]

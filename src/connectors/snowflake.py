@@ -1,5 +1,5 @@
 """
-Snowflake connector implementation for the GDPR tagger with environment variable support.
+Snowflake connector implementation with SSO support.
 """
 
 import os
@@ -14,7 +14,7 @@ from .base import DatabaseConnector
 logger = logging.getLogger(__name__)
 
 class SnowflakeConnector(DatabaseConnector):
-    """Connector implementation for Snowflake with environment variable support"""
+    """Connector implementation for Snowflake with SSO support"""
     
     def __init__(self, config: Dict[str, str]):
         """Initialize with connection parameters"""
@@ -38,31 +38,106 @@ class SnowflakeConnector(DatabaseConnector):
         processed_config = {}
         
         for key, value in config.items():
-            if isinstance(value, str):
-                # Look for ${ENV_VAR} pattern
+            if isinstance(value, str) and value.startswith('${') and value.endswith('}'):
+                # Direct environment variable reference: ${ENV_VAR}
+                env_var = value[2:-1]
+                env_value = os.getenv(env_var)
+                if env_value:
+                    processed_config[key] = env_value
+                    logger.info(f"Replaced environment variable {env_var} for config key '{key}'")
+                else:
+                    logger.warning(f"Environment variable {env_var} not found for key '{key}'. Using empty string.")
+                    processed_config[key] = ''
+            elif isinstance(value, str):
+                # Look for ${ENV_VAR} pattern within strings
                 matches = re.findall(r'\${([A-Za-z0-9_]+)}', value)
                 if matches:
+                    processed_value = value
                     for env_var in matches:
                         env_value = os.getenv(env_var)
                         if env_value:
-                            value = value.replace(f'${{{env_var}}}', env_value)
+                            processed_value = processed_value.replace(f'${{{env_var}}}', env_value)
+                            logger.info(f"Replaced environment variable {env_var} in string for config key '{key}'")
                         else:
-                            logger.warning(f"Environment variable {env_var} not found. Using empty string.")
-                            value = value.replace(f'${{{env_var}}}', '')
-            processed_config[key] = value
-            
+                            logger.warning(f"Environment variable {env_var} not found in string for key '{key}'. Using empty string.")
+                            processed_value = processed_value.replace(f'${{{env_var}}}', '')
+                    processed_config[key] = processed_value
+                else:
+                    processed_config[key] = value
+            elif isinstance(value, dict):
+                # Recursively process nested dictionaries
+                processed_config[key] = self._process_env_variables(value)
+            else:
+                processed_config[key] = value
+        
         return processed_config
     
     def connect(self) -> Any:
-        """Connect to Snowflake database"""
-        self.conn = self.snowflake_connector.connect(
-            user=self.config.get('user'),
-            password=self.config.get('password'),
-            account=self.config.get('account'),
-            warehouse=self.config.get('warehouse'),
-            database=self.config.get('database'),
-            role=self.config.get('role', 'ACCOUNTADMIN')
-        )
+        """Connect to Snowflake database with support for different authentication methods"""
+        # Extract authentication config
+        auth_config = self.config.get('authentication', {})
+        auth_method = auth_config.get('method', 'password')
+        
+        # Build connection parameters based on authentication method
+        conn_params = {
+            'account': self.config.get('account'),
+            'warehouse': self.config.get('warehouse'),
+            'database': self.config.get('database'),
+            'role': self.config.get('role', 'ACCOUNTADMIN')
+        }
+        
+        # Add authentication parameters based on method
+        if auth_method == 'password':
+            # Traditional username/password authentication
+            conn_params['user'] = self.config.get('user')
+            conn_params['password'] = self.config.get('password')
+            logger.info(f"Using password authentication for user: {conn_params['user']}")
+        
+        elif auth_method == 'sso':
+            auth_type = auth_config.get('type', 'externalbrowser')
+            
+            if auth_type == 'externalbrowser':
+                # External browser authentication (opens a browser window)
+                conn_params['authenticator'] = 'externalbrowser'
+                logger.info("Using external browser authentication")
+            
+            elif auth_type == 'okta':
+                # Okta authentication
+                okta_url = auth_config.get('okta_url')
+                if not okta_url:
+                    raise ValueError("Okta URL is required for Okta authentication")
+                
+                conn_params['authenticator'] = okta_url
+                conn_params['user'] = auth_config.get('user') or self.config.get('user')
+                logger.info(f"Using Okta authentication for user: {conn_params['user']}")
+            
+            elif auth_type == 'azure':
+                # Azure AD authentication
+                conn_params['authenticator'] = 'externalbrowser'
+                conn_params['user'] = auth_config.get('user') or self.config.get('user')
+                logger.info(f"Using Azure AD authentication for user: {conn_params['user']}")
+            
+            else:
+                raise ValueError(f"Unsupported SSO authentication type: {auth_type}")
+        
+        elif auth_method == 'token':
+            # Token-based authentication
+            token = auth_config.get('token')
+            if not token:
+                raise ValueError("Token is required for token authentication")
+            
+            conn_params['token'] = token
+            logger.info("Using token-based authentication")
+        
+        else:
+            raise ValueError(f"Unsupported authentication method: {auth_method}")
+        
+        # Log connection parameters (excluding sensitive info)
+        safe_params = {k: v for k, v in conn_params.items() if k not in ['password', 'token']}
+        logger.info(f"Connecting to Snowflake with parameters: {safe_params}")
+        
+        # Connect to Snowflake
+        self.conn = self.snowflake_connector.connect(**conn_params)
         logger.info(f"Connected to Snowflake database: {self.config.get('database')}")
         return self.conn
     

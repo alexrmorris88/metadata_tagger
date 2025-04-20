@@ -3,25 +3,45 @@
     {
       "name": "Production",
       "config": {
-        "user": "${SNOWFLAKE_USER}",
-        "password": "${SNOWFLAKE_PASSWORD}",
         "account": "${SNOWFLAKE_ACCOUNT}",
         "warehouse": "COMPUTE_WH",
         "database": "MY_SAMPLE_DATA",
-        "role": "ACCOUNTADMIN"
+        "role": "ACCOUNTADMIN",
+        "authentication": {
+          "method": "sso",
+          "type": "externalbrowser"
+        }
       }
     },
     {
       "name": "Development",
+      "config": {
+        "account": "${SNOWFLAKE_ACCOUNT}",
+        "warehouse": "COMPUTE_WH",
+        "database": "MY_SAMPLE_DATA",
+        "role": "ACCOUNTADMIN",
+        "authentication": {
+          "method": "sso",
+          "type": "okta",
+          "okta_url": "${OKTA_URL}",
+          "user": "${SNOWFLAKE_USER}"
+        }
+      }
+    },
+    {
+      "name": "LegacyAuth",
       "config": {
         "user": "${SNOWFLAKE_USER}",
         "password": "${SNOWFLAKE_PASSWORD}",
         "account": "${SNOWFLAKE_ACCOUNT}",
         "warehouse": "COMPUTE_WH",
         "database": "MY_SAMPLE_DATA",
-        "role": "ACCOUNTADMIN"
+        "role": "ACCOUNTADMIN",
+        "authentication": {
+          "method": "password"
+        }
       }
     }
   ],
-  "default_database": "Production"
+  "default_database": "LegacyAuth"
 }
