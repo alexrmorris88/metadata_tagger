@@ -94,7 +94,7 @@ pip install -r requirements.txt
 
 Then configure:
 
-- `config/snowflake_database_config.json` – connection settings  
+- `config/database_config.json` – connection settings  
 - `.env` – credentials (excluded from Git)  
 - `config/tag_rules.yaml` – tagging rules  
 - `config/overrides.json` – manual overrides (optional)  
@@ -103,7 +103,7 @@ Then configure:
 
 ## ⚙️ Configuration Files
 
-### `snowflake_database_config.json`
+### `database_config.json`
 
 Supports multiple environments using env variables:
 ```json
@@ -114,10 +114,25 @@ Supports multiple environments using env variables:
       "config": {
         "user": "${SNOWFLAKE_USER}",
         "password": "${SNOWFLAKE_PASSWORD}",
-        ...
+        "account": "${SNOWFLAKE_ACCOUNT}",
+        "warehouse": "COMPUTE_WH",
+        "database": "MY_SAMPLE_DATA",
+        "role": "ACCOUNTADMIN"
+      }
+    },
+    {
+      "name": "Development",
+      "config": {
+        "user": "${SNOWFLAKE_USER}",
+        "password": "${SNOWFLAKE_PASSWORD}",
+        "account": "${SNOWFLAKE_ACCOUNT}",
+        "warehouse": "COMPUTE_WH",
+        "database": "MY_SAMPLE_DATA",
+        "role": "ACCOUNTADMIN"
       }
     }
-  ]
+  ],
+  "default_database": "Production"
 }
 ```
 
@@ -125,6 +140,7 @@ Supports multiple environments using env variables:
 ```env
 SNOWFLAKE_USER=your_user
 SNOWFLAKE_PASSWORD=your_password
+SNOWFLAKE_ACCOUNT=your_snowflake_account
 ...
 ```
 
