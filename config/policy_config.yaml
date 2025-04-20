@@ -1,0 +1,33 @@
+# Snowflake Policy Configuration
+policies:
+  # Global settings for all policies
+  global:
+    database: "${SNOWFLAKE_DATABASE}"  # Read from environment variable
+    admin_role: "ACCOUNTADMIN"         # Role that can see unmasked data
+    default_tag: "PII"                 # Tag name applied by the metadata tagger
+    # The policy_schema is not specified here, so it will automatically use the active schema
+    
+  # Category-based Masking Policies
+  # These policies are automatically applied to columns with matching tags
+  category_policies:
+    - category: "PII - Customer Information"
+      masking_policy:
+        # The name will be sanitized to become pii_customer_information
+        name: "pii_customer_information"
+        data_types:
+          VARCHAR: "CASE WHEN current_role() = 'ACCOUNTADMIN' THEN VAL ELSE '********' END"
+          INTEGER: "CASE WHEN current_role() = 'ACCOUNTADMIN' THEN VAL ELSE 999999 END"
+          NUMBER: "CASE WHEN current_role() = 'ACCOUNTADMIN' THEN VAL ELSE 999999 END"
+          DATE: "CASE WHEN current_role() = 'ACCOUNTADMIN' THEN VAL ELSE '0000-00-00' END"
+        comment: "Mask customer PII data except for admin role"
+        
+    - category: "PII - Financial Data"
+      masking_policy:
+        # The name will be sanitized to become pii_financial_data
+        name: "pii_financial_data"
+        data_types:
+          VARCHAR: "CASE WHEN current_role() = 'ACCOUNTADMIN' THEN VAL ELSE '********' END"
+          INTEGER: "CASE WHEN current_role() = 'ACCOUNTADMIN' THEN VAL ELSE 999999 END"
+          NUMBER: "CASE WHEN current_role() = 'ACCOUNTADMIN' THEN VAL ELSE 999999 END"
+          DATE: "CASE WHEN current_role() = 'ACCOUNTADMIN' THEN VAL ELSE '0000-00-00' END"
+        comment: "Mask financial PII data except for admin role"

@@ -1,11 +1,137 @@
 [
   {
-    "schema": "REPORT_USAGE",
-    "table": "FCT_MOST_EXPENSIVE_QUERIES",
-    "column": "USER_NAME",
+    "schema": "TPCDS_SF10TCL",
+    "table": "CUSTOMER",
+    "column": "C_FIRST_NAME",
     "tag_name": "PII",
     "tag_value": "PII - Customer Information",
-    "reason": "Column name pattern: USER_NAME",
-    "database": "BrowserSSO"
+    "reason": "Column name pattern: C_FIRST_NAME",
+    "database": "PasswordAuth"
+  },
+  {
+    "schema": "TPCDS_SF10TCL",
+    "table": "CUSTOMER",
+    "column": "C_LAST_NAME",
+    "tag_name": "PII",
+    "tag_value": "PII - Customer Information",
+    "reason": "Column name pattern: C_LAST_NAME",
+    "database": "PasswordAuth"
+  },
+  {
+    "schema": "TPCDS_SF10TCL",
+    "table": "CUSTOMER",
+    "column": "C_BIRTH_DAY",
+    "tag_name": "PII",
+    "tag_value": "PII - Customer Information",
+    "reason": "Manual override",
+    "database": "PasswordAuth"
+  },
+  {
+    "schema": "TPCDS_SF10TCL",
+    "table": "CUSTOMER",
+    "column": "C_BIRTH_MONTH",
+    "tag_name": "PII",
+    "tag_value": "PII - Customer Information",
+    "reason": "Manual override",
+    "database": "PasswordAuth"
+  },
+  {
+    "schema": "TPCDS_SF10TCL",
+    "table": "CUSTOMER",
+    "column": "C_BIRTH_YEAR",
+    "tag_name": "PII",
+    "tag_value": "PII - Customer Information",
+    "reason": "Manual override",
+    "database": "PasswordAuth"
+  },
+  {
+    "schema": "TPCDS_SF10TCL",
+    "table": "CUSTOMER",
+    "column": "C_BIRTH_COUNTRY",
+    "tag_name": "PII",
+    "tag_value": "PII - Customer Information",
+    "reason": "Column name pattern: C_BIRTH_COUNTRY",
+    "database": "PasswordAuth"
+  },
+  {
+    "schema": "TPCDS_SF10TCL",
+    "table": "CUSTOMER",
+    "column": "C_EMAIL_ADDRESS",
+    "tag_name": "PII",
+    "tag_value": "PII - Customer Information",
+    "reason": "Column name pattern: C_EMAIL_ADDRESS",
+    "database": "PasswordAuth"
+  },
+  {
+    "schema": "TPCDS_SF10TCL",
+    "table": "CUSTOMER_ADDRESS",
+    "column": "CA_ADDRESS_SK",
+    "tag_name": "PII",
+    "tag_value": "PII - Customer Information",
+    "reason": "Column name pattern: CA_ADDRESS_SK",
+    "database": "PasswordAuth"
+  },
+  {
+    "schema": "TPCDS_SF10TCL",
+    "table": "CUSTOMER_ADDRESS",
+    "column": "CA_ADDRESS_ID",
+    "tag_name": "PII",
+    "tag_value": "PII - Customer Information",
+    "reason": "Column name pattern: CA_ADDRESS_ID",
+    "database": "PasswordAuth"
+  },
+  {
+    "schema": "TPCDS_SF10TCL",
+    "table": "CUSTOMER_ADDRESS",
+    "column": "CA_CITY",
+    "tag_name": "PII",
+    "tag_value": "PII - Customer Information",
+    "reason": "Column name pattern: CA_CITY",
+    "database": "PasswordAuth"
+  },
+  {
+    "schema": "TPCDS_SF10TCL",
+    "table": "CUSTOMER_ADDRESS",
+    "column": "CA_STATE",
+    "tag_name": "PII",
+    "tag_value": "PII - Customer Information",
+    "reason": "Column name pattern: CA_STATE",
+    "database": "PasswordAuth"
+  },
+  {
+    "schema": "TPCDS_SF10TCL",
+    "table": "CUSTOMER_ADDRESS",
+    "column": "CA_ZIP",
+    "tag_name": "PII",
+    "tag_value": "PII - Customer Information",
+    "reason": "Column name pattern: CA_ZIP",
+    "database": "PasswordAuth"
+  },
+  {
+    "schema": "TPCDS_SF10TCL",
+    "table": "CUSTOMER_ADDRESS",
+    "column": "CA_COUNTRY",
+    "tag_name": "PII",
+    "tag_value": "PII - Customer Information",
+    "reason": "Column name pattern: CA_COUNTRY",
+    "database": "PasswordAuth"
+  },
+  {
+    "schema": "TPCDS_SF10TCL",
+    "table": "STORE_SALES",
+    "column": "SS_TICKET_NUMBER",
+    "tag_name": "PII",
+    "tag_value": "PII - Customer Information",
+    "reason": "Data pattern match: 99/100 samples",
+    "database": "PasswordAuth"
+  },
+  {
+    "schema": "TPCDS_SF10TCL",
+    "table": "WEB_SALES",
+    "column": "WS_ORDER_NUMBER",
+    "tag_name": "PII",
+    "tag_value": "PII - Customer Information",
+    "reason": "Data pattern match: 84/100 samples",
+    "database": "PasswordAuth"
   }
 ]
