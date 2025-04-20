@@ -85,7 +85,7 @@ Modular design supports database extensibility, custom logic, and clean configur
 ### Setup Instructions
 
 ```bash
-git clone https://github.com/your-org/metadata-tagger.git
+git clone https://github.com/alexrmorris88/metadata_tagger.git
 cd metadata_tagger
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
