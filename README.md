@@ -42,15 +42,32 @@ The Metadata Database Tagger automates the detection and tagging of sensitive da
 ```
 metadata_tagger/
 ├── config/
-│   ├── snowflake_database_config.json
-│   ├── tag_rules.yaml
-│   └── overrides.json
+│   ├── database_config.json
+│   ├── overrides.json
+│   └── tag_rules.yaml
 ├── src/
 │   ├── main.py
+│   ├── __init__.py
 │   ├── connectors/
+│   │   ├── __init__.py
+│   │   ├── azure.py
+│   │   ├── base.py
+│   │   ├── bigquery.py
+│   │   ├── databricks.py
+│   │   └── snowflake.py
 │   ├── detection/
+│   │   ├── __init__.py
+│   │   ├── detector.py
+│   │   ├── rule_engine.py
+│   │   └── rule_loader.py
 │   └── utils/
-└── .env
+│       ├── __init__.py
+│       ├── export.py
+│       ├── logger.py
+│       └── override_handler.py
+├── __init__.py
+├── main.py
+├── .env
 ```
 
 Modular design supports database extensibility, custom logic, and clean configuration management.
