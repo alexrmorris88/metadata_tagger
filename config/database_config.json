@@ -1,12 +1,13 @@
 {
   "databases": [
     {
-      "name": "Production",
+      "name": "BrowserSSO",
       "config": {
         "account": "${SNOWFLAKE_ACCOUNT}",
-        "warehouse": "COMPUTE_WH",
-        "database": "MY_SAMPLE_DATA",
-        "role": "ACCOUNTADMIN",
+        "user": "${SNOWFLAKE_USER}",
+        "warehouse": "${SNOWFLAKE_WAREHOUSE}",
+        "database": "${SNOWFLAKE_DATABASE}",
+        "role": "${SNOWFLAKE_ROLE}",
         "authentication": {
           "method": "sso",
           "type": "externalbrowser"
@@ -14,34 +15,34 @@
       }
     },
     {
-      "name": "Development",
+      "name": "OktaSSO",
       "config": {
         "account": "${SNOWFLAKE_ACCOUNT}",
-        "warehouse": "COMPUTE_WH",
-        "database": "MY_SAMPLE_DATA",
-        "role": "ACCOUNTADMIN",
+        "user": "${SNOWFLAKE_USER}",
+        "warehouse": "${SNOWFLAKE_WAREHOUSE}",
+        "database": "${SNOWFLAKE_DATABASE}",
+        "role": "${SNOWFLAKE_ROLE}",
         "authentication": {
           "method": "sso",
           "type": "okta",
-          "okta_url": "${OKTA_URL}",
-          "user": "${SNOWFLAKE_USER}"
+          "okta_url": "${OKTA_URL}"
         }
       }
     },
     {
-      "name": "LegacyAuth",
+      "name": "PasswordAuth",
       "config": {
         "user": "${SNOWFLAKE_USER}",
         "password": "${SNOWFLAKE_PASSWORD}",
         "account": "${SNOWFLAKE_ACCOUNT}",
-        "warehouse": "COMPUTE_WH",
-        "database": "MY_SAMPLE_DATA",
-        "role": "ACCOUNTADMIN",
+        "warehouse": "${SNOWFLAKE_WAREHOUSE}",
+        "database": "${SNOWFLAKE_DATABASE}",
+        "role": "${SNOWFLAKE_ROLE}",
         "authentication": {
           "method": "password"
         }
       }
     }
   ],
-  "default_database": "LegacyAuth"
+  "default_database": "PasswordAuth"
 }

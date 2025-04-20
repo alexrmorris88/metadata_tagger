@@ -96,10 +96,17 @@ class SnowflakeConnector(DatabaseConnector):
         elif auth_method == 'sso':
             auth_type = auth_config.get('type', 'externalbrowser')
             
+            # All SSO methods require a user
+            user = auth_config.get('user') or self.config.get('user')
+            if not user:
+                raise ValueError("Username is required for SSO authentication. Please specify 'user' in your configuration or SNOWFLAKE_USER in .env file.")
+            
+            conn_params['user'] = user
+            
             if auth_type == 'externalbrowser':
                 # External browser authentication (opens a browser window)
                 conn_params['authenticator'] = 'externalbrowser'
-                logger.info("Using external browser authentication")
+                logger.info(f"Using external browser authentication for user: {user}")
             
             elif auth_type == 'okta':
                 # Okta authentication
@@ -108,14 +115,12 @@ class SnowflakeConnector(DatabaseConnector):
                     raise ValueError("Okta URL is required for Okta authentication")
                 
                 conn_params['authenticator'] = okta_url
-                conn_params['user'] = auth_config.get('user') or self.config.get('user')
-                logger.info(f"Using Okta authentication for user: {conn_params['user']}")
+                logger.info(f"Using Okta authentication for user: {user}")
             
             elif auth_type == 'azure':
                 # Azure AD authentication
                 conn_params['authenticator'] = 'externalbrowser'
-                conn_params['user'] = auth_config.get('user') or self.config.get('user')
-                logger.info(f"Using Azure AD authentication for user: {conn_params['user']}")
+                logger.info(f"Using Azure AD authentication for user: {user}")
             
             else:
                 raise ValueError(f"Unsupported SSO authentication type: {auth_type}")
