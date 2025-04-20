@@ -1,5 +1,5 @@
 """
-Main entry point for the GDPR Database Tagger.
+Main entry point for the Metadata Database Tagger.
 """
 
 import os
@@ -144,7 +144,7 @@ def process_database(connector: DatabaseConnector, detector: PIIDetector, rule_l
 def main():
     """Main entry point for the script"""
     # Parse command line arguments
-    parser = argparse.ArgumentParser(description='GDPR Data Tagger for database columns')
+    parser = argparse.ArgumentParser(description='Metadata Data Tagger for database columns')
     parser.add_argument('--config', default='config/snowflake_database_config.json', 
                         help='Path to database configuration file (JSON)')
     parser.add_argument('--rules', default='config/tag_rules.yaml', 
