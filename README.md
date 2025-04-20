@@ -1,237 +1,154 @@
-# Metadata Database Tagger
+# Snowflake Metadata Tagger & Policy Manager
 
-An automated Python-based tool for detecting and tagging sensitive or business-critical metadata in databases using configurable patterns and overrides.
+This repository contains two main tools for managing data privacy and security in Snowflake:
 
-## Table of Contents
+1. **Metadata Tagger**: Automatically identifies and tags PII and sensitive data in your Snowflake database
+2. **Policy Manager**: Creates and applies masking and access policies based on those tags
 
-1. [Overview](#overview)  
-2. [System Architecture](#system-architecture)  
-3. [Installation and Setup](#installation-and-setup)  
-4. [Configuration Files](#configuration-files)  
-5. [Usage Instructions](#usage-instructions)  
-6. [Working with Tags](#working-with-tags)  
-7. [Extending the Tool](#extending-the-tool)  
-8. [Troubleshooting](#troubleshooting)  
+## Setup
 
----
-
-## ✅ Overview
-
-The Metadata Database Tagger automates the detection and tagging of sensitive data or business-critical fields across databases using name-based and value-based pattern matching. It is designed for enterprise-scale metadata management, supporting custom rules, override mechanisms, and multiple database platforms.
-
-### Key Features
-
-- Automated tagging using column name and data pattern matching  
-- YAML-based configurable detection rules  
-- Manual tagging overrides (JSON or CSV)  
-- Multi-database and multi-schema scanning  
-- Secure credential handling via `.env`  
-- JSON or CSV output support  
-
-### Use Cases
-
-- Data classification and documentation  
-- Metadata discovery for data governance  
-- Policy tagging for compliance or internal standards  
-- Tagging sensitive or business-critical columns  
-
----
-
-## ⚙️ System Architecture
-
-```
-metadata_tagger/
-├── config/
-│   ├── database_config.json
-│   ├── overrides.json
-│   └── tag_rules.yaml
-├── src/
-│   ├── main.py
-│   ├── __init__.py
-│   ├── connectors/
-│   │   ├── __init__.py
-│   │   ├── azure.py
-│   │   ├── base.py
-│   │   ├── bigquery.py
-│   │   ├── databricks.py
-│   │   └── snowflake.py
-│   ├── detection/
-│   │   ├── __init__.py
-│   │   ├── detector.py
-│   │   ├── rule_engine.py
-│   │   └── rule_loader.py
-│   └── utils/
-│       ├── __init__.py
-│       ├── export.py
-│       ├── logger.py
-│       └── override_handler.py
-├── .env
-```
-
-Modular design supports database extensibility, custom logic, and clean configuration management.
-
----
-
-## ⚙️ Installation and Setup
-
-### Prerequisites
-
-- Python ≥ 3.8  
-- Snowflake credentials  
-- Permissions to read schemas and create/apply tags  
-
-### Setup Instructions
+### 1. Install Dependencies
 
 ```bash
-git clone https://github.com/alexrmorris88/metadata_tagger.git
-cd metadata_tagger
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-Then configure:
+Requirements include:
+- snowflake-connector-python
+- pyyaml
+- python-dotenv
 
-- `config/database_config.json` – connection settings  
-- `.env` – credentials (excluded from Git)  
-- `config/tag_rules.yaml` – tagging rules  
-- `config/overrides.json` – manual overrides (optional)  
+### 2. Configure Environment Variables
 
----
+Create a `.env` file in the root directory with your Snowflake credentials:
 
-## ⚙️ Configuration Files
+```
+# Snowflake Credentials
+SNOWFLAKE_USER=your_username
+SNOWFLAKE_PASSWORD=your_password
+SNOWFLAKE_ACCOUNT=your_account
+SNOWFLAKE_WAREHOUSE=your_warehouse
+SNOWFLAKE_DATABASE=your_database
+SNOWFLAKE_ROLE=your_role
 
-### `database_config.json`
+# For SSO authentication (optional)
+OKTA_URL=https://your-company.okta.com
+```
 
-Supports multiple environments using env variables:
+## Using the Metadata Tagger
+
+The Metadata Tagger scans your Snowflake database and applies tags to columns containing sensitive data.
+
+### 1. Configure Tag Rules
+
+Review and modify `config/tag_rules.yaml` to define:
+- Tag categories (e.g., "PII - Customer Information")
+- Column name patterns (e.g., matching "email" or "address" in column names)
+- Data content patterns (e.g., regex for finding email addresses in data samples)
+
+### 2. Configure Database Connection
+
+Review `config/database_config.json` to ensure it has the correct connection information. The default configuration uses environment variables from your `.env` file.
+
+### 3. Run the Tagger
+
+Basic usage:
+```bash
+python metadata_tagger.py
+```
+
+Advanced options:
+```bash
+python metadata_tagger.py --db-type snowflake --sample-size 200 --schemas PUBLIC SALES --output tagging_results.json
+```
+
+Options:
+- `--config`: Path to database configuration file (default: `config/database_config.json`)
+- `--rules`: Path to tag rules file (default: `config/tag_rules.yaml`)
+- `--db-type`: Database type (default: `snowflake`)
+- `--db-name`: Name of the database to process (as defined in config file)
+- `--schemas`: List of schemas to process (default: all schemas)
+- `--override`: Path to override file (default: `config/overrides.json`)
+- `--sample-size`: Number of rows to check per column (default: 100)
+- `--output`: Output file for tagging results (default: `tagging_results.json`)
+
+### 4. Review Results
+
+After running, check the output file (`tagging_results.json` by default) to see which columns were tagged and why.
+
+## Using the Policy Manager
+
+The Policy Manager creates and applies Snowflake security policies based on the tags applied by the Metadata Tagger.
+
+### 1. Configure Policies
+
+Review and modify `config/policy_config.yaml` to define:
+- Global settings (database, admin role, etc.)
+- Category-based masking policies
+- Row access policies
+
+### 2. Run the Policy Manager
+
+Basic usage:
+```bash
+python policy_manager.py --apply
+```
+
+Advanced options:
+```bash
+python policy_manager.py --apply --db-name PasswordAuth --schema PUBLIC --masking-only
+```
+
+Options:
+- `--config`: Path to database configuration file (default: `config/database_config.json`)
+- `--policy-config`: Path to policy configuration file (default: `config/policy_config.yaml`)
+- `--db-name`: Name of the database to use (as defined in config file)
+- `--apply`: Apply policies to the database
+- `--validate`: Validate policy configuration without applying
+- `--schema`: Schema to use for policy creation
+- `--row-access-only`: Apply only row access policies
+- `--masking-only`: Apply only masking policies
+- `--tags-only`: Apply only tag policies
+
+## Custom Tag Overrides
+
+If you need to manually specify tags for certain columns, create or edit `config/overrides.json`:
+
 ```json
 {
-  "databases": [
-    {
-      "name": "Production",
-      "config": {
-        "user": "${SNOWFLAKE_USER}",
-        "password": "${SNOWFLAKE_PASSWORD}",
-        "account": "${SNOWFLAKE_ACCOUNT}",
-        "warehouse": "COMPUTE_WH",
-        "database": "MY_SAMPLE_DATA",
-        "role": "ACCOUNTADMIN"
-      }
-    },
-    {
-      "name": "Development",
-      "config": {
-        "user": "${SNOWFLAKE_USER}",
-        "password": "${SNOWFLAKE_PASSWORD}",
-        "account": "${SNOWFLAKE_ACCOUNT}",
-        "warehouse": "COMPUTE_WH",
-        "database": "MY_SAMPLE_DATA",
-        "role": "ACCOUNTADMIN"
-      }
-    }
-  ],
-  "default_database": "Production"
+  "SCHEMA.TABLE.COLUMN": "PII - Customer Information",
+  "DATABASE.SCHEMA.TABLE.COLUMN": "PII - Financial Data"
 }
 ```
 
-### `.env`
-```env
-SNOWFLAKE_USER=your_user
-SNOWFLAKE_PASSWORD=your_password
-SNOWFLAKE_ACCOUNT=your_snowflake_account
-...
-```
+## Complete Workflow Example
 
-### `tag_rules.yaml` – Main tagging logic
+A typical workflow uses both tools in sequence:
 
-Define categories, name-based patterns, and data patterns.  
-Includes thresholds like `data_pattern_match: 0.05`.
-
-### `overrides.json` or `overrides.csv`
-
-Manual tag assignments by column.
-
----
-
-## 🚀 Usage Instructions
-
-### Basic Command
-
+1. Run the Metadata Tagger to scan and tag data:
 ```bash
-python src/main.py
+python metadata_tagger.py
 ```
 
-### Advanced Options
+2. Review the results and adjust overrides if needed in `config/overrides.json`
 
+3. Run the tagger again with your overrides:
 ```bash
-python src/main.py --config config/database_config.json \
-  --rules config/tag_rules.yaml \
-  --override config/overrides.json \
-  --db-name Production \
-  --schemas PUBLIC \
-  --sample-size 200 \
-  --output results.csv \
-  --output-format csv
+python metadata_tagger.py --override config/overrides.json
 ```
 
----
-
-## 🏷️ Working with Tags
-
-### Tag Application Order
-
-1. Manual override  
-2. Column name regex match  
-3. Data sample pattern match  
-4. Apply tag using Snowflake's `ALTER TABLE`  
-
-### Query Tags in Snowflake
-
-```sql
-SELECT * FROM TABLE(INFORMATION_SCHEMA.TAG_REFERENCES(...))
-WHERE TAG_NAME = 'PII';
+4. Apply security policies based on the tags:
+```bash
+python policy_manager.py --apply
 ```
 
----
+5. Verify in Snowflake that the appropriate policies have been applied
 
-## 🧩 Extending the Tool
+## Troubleshooting
 
-### Add New Rules
+- **Connection issues**: Verify your credentials in the `.env` file
+- **Permission errors**: Ensure your Snowflake role has sufficient privileges
+- **Missing tags**: Check the tag rules and increase the sample size for better detection
+- **Policy errors**: Run with `--validate` first to check your policy configuration
 
-In `tag_rules.yaml`, add to:
-- `name_patterns`
-- `data_patterns`
-- `categories`
-
-### Support New Databases
-
-Implement a new connector under `src/connectors/` with the required methods:
-- `connect()`, `get_schemas()`, `get_tables()`, etc.
-
-Update the `create_connector()` logic to recognize your database.
-
-### Add ML Detection
-
-Customize `PIIDetector` in `src/detection/detector.py` with ML logic.
-
----
-
-## 🧠 Troubleshooting
-
-| Issue | Cause | Solution |
-|-------|-------|----------|
-| Env vars not working | `.env` missing or wrong format | Ensure dotenv is loaded and names match |
-| Connection error | Invalid credentials or config | Double-check `.env` and Snowflake URL |
-| Tags not applied | Rule mismatch or low match rate | Check sample size, regex, and thresholds |
-| Permission denied | Missing privileges | Grant USAGE, SELECT, CREATE TAG, MODIFY |
-
----
-
-## 📓 Logging
-
-To enable verbose logging:
-
-```python
-logging.basicConfig(level=logging.DEBUG, ...)
-```
-# metadata_tagger
+For detailed logs, check the application logs in your terminal output.
