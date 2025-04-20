@@ -22,7 +22,7 @@ class RuleLoader:
         self.category_map = {}  # Maps category_id to category name
         self.thresholds = {}
         self.tag_configuration = {
-            'tag_name': 'GDPR_CLASSIFICATION',  # Default value
+            'tag_name': 'PII',  # Default value
             'tag_schema': ''
         }
         self.loaded = False
@@ -37,7 +37,7 @@ class RuleLoader:
             if 'tag_configuration' in config:
                 tag_config = config.get('tag_configuration', {})
                 self.tag_configuration = {
-                    'tag_name': tag_config.get('tag_name', 'GDPR_CLASSIFICATION'),
+                    'tag_name': tag_config.get('tag_name', 'PII'),
                     'tag_schema': tag_config.get('tag_schema', '')
                 }
             
@@ -121,7 +121,7 @@ class RuleLoader:
         """Get the configured tag name"""
         if not self.loaded:
             self.load_rules()
-        return self.tag_configuration.get('tag_name', 'GDPR_CLASSIFICATION')
+        return self.tag_configuration.get('tag_name', 'PII')
     
     def get_tag_schema(self) -> str:
         """Get the configured tag schema"""
