@@ -145,7 +145,7 @@ def main():
     """Main entry point for the script"""
     # Parse command line arguments
     parser = argparse.ArgumentParser(description='Metadata Data Tagger for database columns')
-    parser.add_argument('--config', default='config/snowflake_database_config.json', 
+    parser.add_argument('--config', default='config/database_config.json', 
                         help='Path to database configuration file (JSON)')
     parser.add_argument('--rules', default='config/tag_rules.yaml', 
                         help='Path to tag rules configuration file (YAML)')
