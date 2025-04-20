@@ -65,8 +65,6 @@ metadata_tagger/
 │       ├── export.py
 │       ├── logger.py
 │       └── override_handler.py
-├── __init__.py
-├── main.py
 ├── .env
 ```
 
