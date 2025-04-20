@@ -1,0 +1,120 @@
+# Medata Tag Rules Configuration
+# This file defines patterns for identifying sensitive data in database columns
+
+# Tag structure settings
+tag_configuration:
+  # The name of the tag to create in the database
+  tag_name: "PII"
+  # Optional: Use a dedicated schema for tags (leave empty to use table's schema)
+  tag_schema: ""
+
+# Tag categories
+categories:
+  - id: "customer_pii"
+    name: "PII - Customer Information"
+    description: "Personally Identifiable Information about customers"
+  
+  - id: "financial_pii"
+    name: "PII - Financial Data" 
+    description: "Financial information that must be protected"
+  
+  - id: "internal_sensitive"
+    name: "Sensitive - Internal Only"
+    description: "Company confidential information"
+  
+  - id: "technical_pii"
+    name: "PII - Technical Data"
+    description: "Technical identifiers that can identify individuals"
+
+# Column name pattern rules
+name_patterns:
+  # Customer Name Fields (first name, last name, full name, customer name, username)
+  - pattern: '(?i)(^|_)(first|last|full|customer|user)(_)?name(s)?($|_)'
+    category_id: "customer_pii"
+  
+  # Customer Email Address
+  - pattern: '(?i)(^|_)(email|e-mail|mail)(_)?address(es)?($|_)'
+    category_id: "customer_pii"
+  
+  # Customer Phone Numbers (mobile, cell, telephone)
+  - pattern: '(?i)(^|_)(phone|telephone|mobile|cell)(_)?(number|nbr|no|#)?($|_)'
+    category_id: "customer_pii"
+  
+  # Government Identifiers (SSN, tax ID, national ID)
+  - pattern: '(?i)(^|_)(ssn|social_security|tax_id|national_id)($|_)'
+    category_id: "customer_pii"
+  
+  # Date of Birth
+  - pattern: '(?i)(^|_)(birth(_)?date|dob|date_of_birth)($|_)'
+    category_id: "customer_pii"
+  
+  # Address Components (street, city, state, zip, country)
+  - pattern: '(?i)(^|_)(address|city|state|zip|postal|country)($|_)'
+    category_id: "customer_pii"
+  
+  # Demographics (gender, sex, race, ethnicity)
+  - pattern: '(?i)(^|_)(gender|sex|race|ethnicity)($|_)'
+    category_id: "customer_pii"
+  
+  # Credit Card Number Fields
+  - pattern: '(?i)(^|_)(credit_card|cc|card)(_)?(number|nbr|no|#)?($|_)'
+    category_id: "financial_pii"
+  
+  # Card Verification Codes (CVV, CVC)
+  - pattern: '(?i)(^|_)(cvv|cvc|cvn|card_verification)($|_)'
+    category_id: "financial_pii"
+  
+  # Credit Card Expiry Dates
+  - pattern: '(?i)(^|_)(expir(y|ation)(_)?date)($|_)'
+    category_id: "financial_pii"
+  
+  # Bank Account Numbers
+  - pattern: '(?i)(^|_)(account|acct)(_)?(number|nbr|no|#)?($|_)'
+    category_id: "financial_pii"
+  
+  # Bank Routing Information (SWIFT, IBAN)
+  - pattern: '(?i)(^|_)(routing|swift|iban)(_)?(number|nbr|no|#)?($|_)'
+    category_id: "financial_pii"
+  
+  # Salary or Income Fields
+  - pattern: '(?i)(^|_)(income|salary)($|_)'
+    category_id: "financial_pii"
+  
+  # Employee ID Fields
+  - pattern: '(?i)(^|_)(employee|staff|personnel)(_)?id($|_)'
+    category_id: "internal_sensitive"
+  
+  # Passwords and Hashes
+  - pattern: '(?i)(^|_)(password|passwd|pass|pwd|hash)($|_)'
+    category_id: "internal_sensitive"
+  
+  # API Keys, Secret Tokens
+  - pattern: '(?i)(^|_)(api(_)?key|secret(_)?key|token)($|_)'
+    category_id: "internal_sensitive"
+
+# Data content pattern rules
+data_patterns:
+  # Email pattern
+  - pattern: '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
+    category_id: "customer_pii"
+  
+  # Phone numbers (various formats)
+  - pattern: '\b(\+\d{1,3}[\s-]?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}\b'
+    category_id: "customer_pii"
+  
+  # SSN (US Social Security Number)
+  - pattern: '\b\d{3}[-]?\d{2}[-]?\d{4}\b'
+    category_id: "customer_pii"
+  
+  # Credit card numbers (basic pattern, more sophisticated validation would be better)
+  - pattern: '\b(?:\d{4}[-\s]?){3}\d{4}\b'
+    category_id: "financial_pii"
+  
+  # IP addresses
+  - pattern: '\b(?:\d{1,3}\.){3}\d{1,3}\b'
+    category_id: "technical_pii"
+
+# Detection thresholds
+thresholds:
+  # Minimum percentage of data samples that must match a pattern
+  data_pattern_match: 0.05  # 5%

@@ -1,0 +1,27 @@
+{
+  "databases": [
+    {
+      "name": "Production",
+      "config": {
+        "user": "${SNOWFLAKE_USER}",
+        "password": "${SNOWFLAKE_PASSWORD}",
+        "account": "${SNOWFLAKE_ACCOUNT}",
+        "warehouse": "COMPUTE_WH",
+        "database": "MY_SAMPLE_DATA",
+        "role": "ACCOUNTADMIN"
+      }
+    },
+    {
+      "name": "Development",
+      "config": {
+        "user": "${SNOWFLAKE_USER}",
+        "password": "${SNOWFLAKE_PASSWORD}",
+        "account": "${SNOWFLAKE_ACCOUNT}",
+        "warehouse": "COMPUTE_WH",
+        "database": "MY_SAMPLE_DATA",
+        "role": "ACCOUNTADMIN"
+      }
+    }
+  ],
+  "default_database": "Production"
+}
