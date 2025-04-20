@@ -94,20 +94,20 @@ class PolicyEngine:
                 
                 # Process each tagged column
                 for row in rows:
-                    column = row[3]
+                    column_name = row[3]
                     tag_value = row[5]
                     
                     # Get data type from our cached values
-                    data_type = data_types.get(column, "VARCHAR")
+                    data_type = data_types.get(column_name, "VARCHAR")
                     
                     tagged_columns.append({
                         'schema': schema,
                         'table': table,
-                        'column': column,
+                        'column': column_name,
                         'data_type': data_type,
                         'tag_value': tag_value
                     })
-                    logger.info(f"Found tagged column: {schema}.{table}.{column} with tag '{tag_name}' value: {tag_value}")
+                    logger.info(f"Found tagged column: {schema}.{table}.{column_name} with tag '{tag_name}' value: {tag_value}")
             
             logger.info(f"Found {len(tagged_columns)} tagged columns with tag '{tag_name}' and specified categories")
             return tagged_columns
@@ -286,11 +286,15 @@ class PolicyEngine:
             
             # Check if the policy already exists
             sql = f"""
-            SHOW ROW ACCESS POLICIES IN SCHEMA {database}.{policy_schema} 
-            LIKE '{name}'
+            SHOW ROW ACCESS POLICIES IN SCHEMA {database}.{policy_schema}
             """
             cursor.execute(sql)
-            existing = cursor.fetchone()
+            policies = cursor.fetchall()
+            existing = False
+            for row in policies:
+                if row[1].upper() == name.upper():
+                    existing = True
+                    break
             
             if existing:
                 logger.info(f"Row access policy {name} already exists, updating")
@@ -354,15 +358,20 @@ class PolicyEngine:
         try:
             cursor = self.connector.conn.cursor()
             
-            # Check if the policy already exists
+            # Fix: Changed how we check if the policy exists
+            policy_name = f"{name}_{data_type}"
+            
+            # Check if the policy already exists using SHOW without LIKE
             sql = f"""
-            SHOW MASKING POLICIES IN SCHEMA {database}.{schema} 
-            LIKE '{name}_{data_type}'
+            SHOW MASKING POLICIES IN SCHEMA {database}.{schema}
             """
             cursor.execute(sql)
-            existing = cursor.fetchone()
-            
-            policy_name = f"{name}_{data_type}"
+            policies = cursor.fetchall()
+            existing = False
+            for row in policies:
+                if row[1].upper() == policy_name.upper():
+                    existing = True
+                    break
             
             if existing:
                 logger.info(f"Masking policy {policy_name} already exists, updating")
@@ -379,7 +388,7 @@ class PolicyEngine:
                 if comment:
                     sql += f" COMMENT = '{comment}'"
             
-            logger.debug(f"Executing SQL: {sql}")
+            logger.info(f"Executing SQL: {sql}")
             cursor.execute(sql)
             return True
         except Exception as e:
